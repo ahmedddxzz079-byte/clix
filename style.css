@@ -1,0 +1,483 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-bg: linear-gradient(135deg, #000000 0%, #434343 100%);
+    --primary-text: white;
+    --click-area-bg: radial-gradient(circle, #ffffff 0%, #aaaaaa 100%);
+    --click-area-active: radial-gradient(circle, #eeeeee 0%, #888888 100%);
+    --click-text-color: #333;
+    --button-bg: transparent;
+    --button-border: 1px solid white;
+    --button-hover-bg: white;
+    --button-hover-color: black;
+    --menu-bg: rgba(40, 40, 40, 0.95);
+    --history-bg: rgba(255, 255, 255, 0.1);
+    --settings-bg: rgba(255, 255, 255, 0.05);
+    --achievement-bg: rgba(255, 215, 0, 0.9);
+    --achievement-color: black;
+}
+
+body.light-theme {
+    --primary-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --primary-text: #333;
+    --click-area-bg: radial-gradient(circle, #666 0%, #333 100%);
+    --click-area-active: radial-gradient(circle, #555 0%, #222 100%);
+    --click-text-color: white;
+    --button-bg: transparent;
+    --button-border: 1px solid #333;
+    --button-hover-bg: #333;
+    --button-hover-color: white;
+    --menu-bg: rgba(255, 255, 255, 0.95);
+    --history-bg: rgba(0, 0, 0, 0.1);
+    --settings-bg: rgba(0, 0, 0, 0.05);
+    --achievement-bg: rgba(255, 215, 0, 0.9);
+    --achievement-color: black;
+}
+
+body.blue-theme {
+    --primary-bg: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    --primary-text: white;
+    --click-area-bg: radial-gradient(circle, #4facfe 0%, #00f2fe 100%);
+    --click-area-active: radial-gradient(circle, #43e97b 0%, #38f9d7 100%);
+    --click-text-color: white;
+    --button-bg: transparent;
+    --button-border: 1px solid #4facfe;
+    --button-hover-bg: #4facfe;
+    --button-hover-color: white;
+    --menu-bg: rgba(30, 60, 114, 0.95);
+    --history-bg: rgba(79, 172, 254, 0.2);
+    --settings-bg: rgba(79, 172, 254, 0.1);
+    --achievement-bg: rgba(255, 215, 0, 0.9);
+    --achievement-color: black;
+}
+
+body.neon-theme {
+    --primary-bg: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    --primary-text: #00fff5;
+    --click-area-bg: radial-gradient(circle, #00fff5 0%, #00ccff 100%);
+    --click-area-active: radial-gradient(circle, #ff00cc 0%, #ff0066 100%);
+    --click-text-color: #0f0c29;
+    --button-bg: transparent;
+    --button-border: 1px solid #00fff5;
+    --button-hover-bg: #00fff5;
+    --button-hover-color: #0f0c29;
+    --menu-bg: rgba(15, 12, 41, 0.95);
+    --history-bg: rgba(0, 255, 245, 0.1);
+    --settings-bg: rgba(0, 255, 245, 0.05);
+    --achievement-bg: rgba(255, 0, 204, 0.9);
+    --achievement-color: white;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--primary-bg);
+    font-family: 'Arial', sans-serif;
+    color: var(--primary-text);
+    overflow-x: hidden;
+    padding: 20px 0;
+    transition: all 0.3s ease;
+}
+
+.container {
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    position: relative;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    letter-spacing: 3px;
+    flex: 1;
+    text-align: center;
+}
+
+.menu-btn {
+    background: transparent;
+    border: none;
+    color: var(--primary-text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.menu-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: var(--menu-bg);
+    border-radius: 10px;
+    padding: 15px;
+    width: 250px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    display: none;
+    backdrop-filter: blur(10px);
+}
+
+.menu-dropdown.active {
+    display: block;
+}
+
+.menu-section {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.menu-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.menu-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    font-weight: 400;
+    text-align: left;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+.timer {
+    font-size: 5rem;
+    margin: 20px 0;
+    font-weight: 100;
+    letter-spacing: 2px;
+    height: 80px;
+}
+
+.counter {
+    font-size: 4rem;
+    margin: 15px 0;
+    font-weight: 100;
+    height: 70px;
+}
+
+.click-area {
+    width: 200px;
+    height: 200px;
+    margin: 20px auto;
+    background: var(--click-area-bg);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.1s;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.click-area:active {
+    transform: scale(0.95);
+    background: var(--click-area-active);
+}
+
+.click-text {
+    font-size: 1.2rem;
+    color: var(--click-text-color);
+    font-weight: 600;
+    z-index: 2;
+}
+
+.progress-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(transparent 0%, rgba(255, 255, 255, 0.3) 0%);
+    transition: background 1s linear;
+    z-index: 1;
+}
+
+.time-options, .theme-options {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.time-btn, .theme-btn {
+    background: var(--button-bg);
+    border: var(--button-border);
+    color: var(--primary-text);
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 0;
+    outline: none;
+}
+
+.time-btn:hover, .time-btn.active, .theme-btn:hover, .theme-btn.active {
+    background: var(--button-hover-bg);
+    color: var(--button-hover-color);
+}
+
+.controls {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    background: var(--button-bg);
+    border: var(--button-border);
+    color: var(--primary-text);
+    padding: 10px 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 0;
+    outline: none;
+}
+
+.control-btn:hover {
+    background: var(--button-hover-bg);
+    color: var(--button-hover-color);
+}
+
+.result {
+    font-size: 1.8rem;
+    margin: 20px 0;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.cps {
+    font-size: 1.4rem;
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
+.history {
+    margin-top: 10px;
+    padding: 15px;
+    background: var(--history-bg);
+    border-radius: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.history h3 {
+    margin-bottom: 10px;
+    font-weight: 300;
+    font-size: 1.2rem;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings {
+    margin-top: 20px;
+    padding: 15px;
+    background: var(--settings-bg);
+    border-radius: 10px;
+    text-align: left;
+}
+
+.settings h3 {
+    margin-bottom: 15px;
+    font-weight: 300;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.setting-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.setting-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.click-effect {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: clickAnimation 0.5s ease-out;
+}
+
+@keyframes clickAnimation {
+    0% {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+
+.achievement {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--achievement-bg);
+    color: var(--achievement-color);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.achievement.show {
+    display: block;
+    animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+    0% {
+        top: -50px;
+        opacity: 0;
+    }
+    100% {
+        top: 20px;
+        opacity: 1;
+    }
+}
+
+@media (max-width: 500px) {
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .timer {
+        font-size: 4rem;
+    }
+    
+    .counter {
+        font-size: 3rem;
+    }
+    
+    .click-area {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .time-options, .theme-options {
+        gap: 5px;
+    }
+    
+    .time-btn, .theme-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .history {
+        max-height: 150px;
+    }
+    
+    .menu-dropdown {
+        width: 90%;
+        right: 5%;
+    }
+               }
