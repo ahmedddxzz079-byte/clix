@@ -4,318 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clean Click Speed Test</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #000000 0%, #434343 100%);
-            font-family: 'Arial', sans-serif;
-            color: white;
-            overflow-x: hidden;
-            padding: 20px 0;
-        }
-        
-        .container {
-            text-align: center;
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            font-weight: 300;
-            letter-spacing: 3px;
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-            opacity: 0.8;
-        }
-        
-        .timer {
-            font-size: 5rem;
-            margin: 20px 0;
-            font-weight: 100;
-            letter-spacing: 2px;
-            height: 80px;
-        }
-        
-        .counter {
-            font-size: 4rem;
-            margin: 15px 0;
-            font-weight: 100;
-            height: 70px;
-        }
-        
-        .click-area {
-            width: 200px;
-            height: 200px;
-            margin: 20px auto;
-            background: radial-gradient(circle, #ffffff 0%, #aaaaaa 100%);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.1s;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
-            user-select: none;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .click-area:active {
-            transform: scale(0.95);
-            background: radial-gradient(circle, #eeeeee 0%, #888888 100%);
-        }
-        
-        .click-text {
-            font-size: 1.2rem;
-            color: #333;
-            font-weight: 600;
-            z-index: 2;
-        }
-        
-        .progress-ring {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: conic-gradient(transparent 0%, rgba(255, 255, 255, 0.3) 0%);
-            transition: background 1s linear;
-            z-index: 1;
-        }
-        
-        .time-options {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        
-        .time-btn {
-            background: transparent;
-            border: 1px solid white;
-            color: white;
-            padding: 8px 15px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 0;
-            outline: none;
-        }
-        
-        .time-btn:hover, .time-btn.active {
-            background: white;
-            color: black;
-        }
-        
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .control-btn {
-            background: transparent;
-            border: 1px solid white;
-            color: white;
-            padding: 10px 15px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 0;
-            outline: none;
-        }
-        
-        .control-btn:hover {
-            background: white;
-            color: black;
-        }
-        
-        .result {
-            font-size: 1.8rem;
-            margin: 20px 0;
-            min-height: 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .cps {
-            font-size: 1.4rem;
-            margin-top: 5px;
-            opacity: 0.8;
-        }
-        
-        .history {
-            margin-top: 30px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .history h3 {
-            margin-bottom: 10px;
-            font-weight: 300;
-            font-size: 1.2rem;
-        }
-        
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .settings {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            text-align: left;
-        }
-        
-        .settings h3 {
-            margin-bottom: 15px;
-            font-weight: 300;
-            font-size: 1.2rem;
-            text-align: center;
-        }
-        
-        .setting-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .setting-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        .toggle {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        
-        .toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: #2196F3;
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        
-        @media (max-width: 500px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .timer {
-                font-size: 4rem;
-            }
-            
-            .counter {
-                font-size: 3rem;
-            }
-            
-            .click-area {
-                width: 180px;
-                height: 180px;
-            }
-            
-            .time-options {
-                gap: 5px;
-            }
-            
-            .time-btn {
-                padding: 6px 12px;
-                font-size: 0.8rem;
-            }
-            
-            .history {
-                max-height: 150px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>CLEAN CLICK SPEED TEST</h1>
+        <div class="header">
+            <h1>CLEAN CLICK SPEED TEST</h1>
+            <button class="menu-btn" id="menuBtn">•••</button>
+            <div class="menu-dropdown" id="menuDropdown">
+                <div class="menu-section">
+                    <h3>TIME OPTIONS</h3>
+                    <div class="time-options">
+                        <button class="time-btn" data-time="5">5 SECONDS</button>
+                        <button class="time-btn active" data-time="10">10 SECONDS</button>
+                        <button class="time-btn" data-time="15">15 SECONDS</button>
+                        <button class="time-btn" data-time="30">30 SECONDS</button>
+                    </div>
+                </div>
+                
+                <div class="menu-section">
+                    <h3>SETTINGS</h3>
+                    <div class="setting-group">
+                        <span class="setting-label">Sound Effects</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="soundToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-group">
+                        <span class="setting-label">Spacebar Clicking</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="spacebarToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-group">
+                        <span class="setting-label">Click Effects</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="clickEffectsToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-group">
+                        <span class="setting-label">Achievement Notifications</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="achievementToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="menu-section">
+                    <h3>THEMES</h3>
+                    <div class="theme-options">
+                        <button class="theme-btn active" data-theme="dark">Dark</button>
+                        <button class="theme-btn" data-theme="light">Light</button>
+                        <button class="theme-btn" data-theme="blue">Blue</button>
+                        <button class="theme-btn" data-theme="neon">Neon</button>
+                    </div>
+                </div>
+                
+                <div class="menu-section">
+                    <h3>RECENT SCORES</h3>
+                    <div class="history" id="historyList"></div>
+                </div>
+            </div>
+        </div>
         
         <div class="stats">
             <div>Best: <span id="bestScore">0</span> CPS</div>
             <div>Avg: <span id="avgScore">0</span> CPS</div>
         </div>
         
-        <div class="timer" id="timer">00</div>
+        <div class="timer" id="timer">10</div>
         <div class="counter" id="counter">0</div>
         
         <div class="click-area" id="clickArea">
             <div class="progress-ring" id="progressRing"></div>
             <div class="click-text">CLICK TO START</div>
-        </div>
-        
-        <div class="time-options">
-            <button class="time-btn" data-time="5">5 SECONDS</button>
-            <button class="time-btn active" data-time="10">10 SECONDS</button>
-            <button class="time-btn" data-time="15">15 SECONDS</button>
-            <button class="time-btn" data-time="30">30 SECONDS</button>
         </div>
         
         <div class="controls">
@@ -325,266 +91,11 @@
         
         <div class="result" id="result"></div>
         
-        <div class="settings">
-            <h3>SETTINGS</h3>
-            <div class="setting-group">
-                <span class="setting-label">Sound Effects</span>
-                <label class="toggle">
-                    <input type="checkbox" id="soundToggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="setting-group">
-                <span class="setting-label">Spacebar Clicking</span>
-                <label class="toggle">
-                    <input type="checkbox" id="spacebarToggle" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-        
-        <div class="history">
-            <h3>RECENT SCORES</h3>
-            <div id="historyList"></div>
+        <div class="achievement" id="achievement">
+            Achievement Unlocked!
         </div>
     </div>
 
-    <script>
-        // Game state
-        const gameState = {
-            count: 0,
-            timeLeft: 10,
-            totalTime: 10,
-            timerInterval: null,
-            isRunning: false,
-            scores: JSON.parse(localStorage.getItem('clickTestScores')) || [],
-            soundEnabled: false,
-            spacebarEnabled: true
-        };
-
-        // DOM elements
-        const elements = {
-            timer: document.getElementById('timer'),
-            counter: document.getElementById('counter'),
-            clickArea: document.getElementById('clickArea'),
-            result: document.getElementById('result'),
-            startBtn: document.getElementById('startBtn'),
-            resetBtn: document.getElementById('resetBtn'),
-            timeButtons: document.querySelectorAll('.time-btn'),
-            progressRing: document.getElementById('progressRing'),
-            bestScore: document.getElementById('bestScore'),
-            avgScore: document.getElementById('avgScore'),
-            historyList: document.getElementById('historyList'),
-            soundToggle: document.getElementById('soundToggle'),
-            spacebarToggle: document.getElementById('spacebarToggle'),
-            clickText: document.querySelector('.click-text')
-        };
-
-        // Initialize the game
-        function init() {
-            updateTimerDisplay();
-            updateStats();
-            setupEventListeners();
-        }
-
-        // Set up event listeners
-        function setupEventListeners() {
-            // Click area
-            elements.clickArea.addEventListener('click', handleClick);
-            
-            // Start button
-            elements.startBtn.addEventListener('click', startGame);
-            
-            // Reset button
-            elements.resetBtn.addEventListener('click', resetGame);
-            
-            // Time selection buttons
-            elements.timeButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    if (gameState.isRunning) return;
-                    gameState.timeLeft = parseInt(this.dataset.time);
-                    gameState.totalTime = gameState.timeLeft;
-                    setActiveTimeButton(gameState.timeLeft);
-                    updateTimerDisplay();
-                });
-            });
-            
-            // Sound toggle
-            elements.soundToggle.addEventListener('change', function() {
-                gameState.soundEnabled = this.checked;
-            });
-            
-            // Spacebar toggle
-            elements.spacebarToggle.addEventListener('change', function() {
-                gameState.spacebarEnabled = this.checked;
-            });
-            
-            // Spacebar support
-            document.addEventListener('keydown', function(e) {
-                if (e.code === 'Space' && gameState.spacebarEnabled) {
-                    e.preventDefault();
-                    if (!gameState.isRunning) {
-                        startGame();
-                    }
-                    if (gameState.isRunning) {
-                        handleClick();
-                    }
-                }
-            });
-        }
-
-        // Set active time button
-        function setActiveTimeButton(selectedTime) {
-            elements.timeButtons.forEach(btn => {
-                btn.classList.remove('active');
-                if (parseInt(btn.dataset.time) === selectedTime) {
-                    btn.classList.add('active');
-                }
-            });
-        }
-
-        // Update timer display
-        function updateTimerDisplay() {
-            elements.timer.textContent = gameState.timeLeft.toString().padStart(2, '0');
-            
-            // Update progress ring
-            const progress = 100 - (gameState.timeLeft / gameState.totalTime * 100);
-            elements.progressRing.style.background = `conic-gradient(transparent 0%, rgba(255, 255, 255, 0.3) ${progress}%)`;
-        }
-
-        // Update statistics
-        function updateStats() {
-            if (gameState.scores.length > 0) {
-                const best = Math.max(...gameState.scores);
-                elements.bestScore.textContent = best.toFixed(1);
-                
-                const avg = gameState.scores.reduce((a, b) => a + b, 0) / gameState.scores.length;
-                elements.avgScore.textContent = avg.toFixed(1);
-                
-                // Update history list
-                elements.historyList.innerHTML = '';
-                const recentScores = gameState.scores.slice(-5).reverse();
-                recentScores.forEach(score => {
-                    const item = document.createElement('div');
-                    item.className = 'history-item';
-                    const now = new Date();
-                    item.innerHTML = `<span>${score.toFixed(1)} CPS</span><span>${now.toLocaleDateString()}</span>`;
-                    elements.historyList.appendChild(item);
-                });
-            }
-        }
-
-        // Play click sound
-        function playClickSound() {
-            if (!gameState.soundEnabled) return;
-            
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.value = 800;
-                oscillator.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.1);
-            } catch (e) {
-                console.log("Audio not supported");
-            }
-        }
-
-        // Handle click
-        function handleClick() {
-            if (!gameState.isRunning) {
-                startGame();
-                return;
-            }
-            
-            gameState.count++;
-            elements.counter.textContent = gameState.count;
-            playClickSound();
-        }
-
-        // Start the game
-        function startGame() {
-            if (gameState.isRunning) return;
-            
-            gameState.isRunning = true;
-            gameState.count = 0;
-            gameState.totalTime = gameState.timeLeft;
-            elements.counter.textContent = gameState.count;
-            elements.result.textContent = '';
-            elements.clickText.textContent = 'CLICK!';
-            elements.startBtn.textContent = 'RUNNING...';
-            elements.startBtn.disabled = true;
-            
-            gameState.timerInterval = setInterval(function() {
-                gameState.timeLeft--;
-                updateTimerDisplay();
-                
-                if (gameState.timeLeft <= 0) {
-                    endGame();
-                }
-            }, 1000);
-        }
-
-        // End the game
-        function endGame() {
-            clearInterval(gameState.timerInterval);
-            gameState.isRunning = false;
-            
-            const cps = (gameState.count / gameState.totalTime).toFixed(2);
-            
-            elements.result.innerHTML = `
-                <div>Total Clicks: ${gameState.count}</div>
-                <div class="cps">${cps} clicks per second</div>
-            `;
-            
-            elements.clickText.textContent = 'TIME\'S UP!';
-            elements.clickArea.style.cursor = 'default';
-            elements.startBtn.textContent = 'START';
-            elements.startBtn.disabled = false;
-            
-            // Save the score
-            saveScore(parseFloat(cps));
-        }
-
-        // Reset the game
-        function resetGame() {
-            clearInterval(gameState.timerInterval);
-            gameState.isRunning = false;
-            gameState.count = 0;
-            gameState.timeLeft = parseInt(document.querySelector('.time-btn.active').dataset.time);
-            gameState.totalTime = gameState.timeLeft;
-            
-            elements.counter.textContent = gameState.count;
-            updateTimerDisplay();
-            elements.result.textContent = '';
-            elements.clickText.textContent = 'CLICK TO START';
-            elements.clickArea.style.cursor = 'pointer';
-            elements.startBtn.textContent = 'START';
-            elements.startBtn.disabled = false;
-        }
-
-        // Save score to localStorage
-        function saveScore(cps) {
-            gameState.scores.push(cps);
-            // Keep only last 10 scores
-            if (gameState.scores.length > 10) {
-                gameState.scores = gameState.scores.slice(-10);
-            }
-            localStorage.setItem('clickTestScores', JSON.stringify(gameState.scores));
-            updateStats();
-        }
-
-        // Initialize the game when DOM is loaded
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
