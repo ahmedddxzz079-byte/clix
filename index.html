@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click Speed Test</title>
+    <title>Enhanced Click Speed Test</title>
     <style>
         * {
             margin: 0;
@@ -19,13 +19,14 @@
             background: linear-gradient(135deg, #000000 0%, #434343 100%);
             font-family: 'Arial', sans-serif;
             color: white;
-            overflow: hidden;
+            overflow-x: hidden;
+            padding: 20px 0;
         }
         
         .container {
             text-align: center;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             padding: 20px;
         }
         
@@ -127,17 +128,20 @@
         
         .controls {
             margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         
         .control-btn {
             background: transparent;
             border: 1px solid white;
             color: white;
-            padding: 10px 25px;
-            font-size: 1.1rem;
+            padding: 10px 15px;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s;
-            margin: 0 10px;
             border-radius: 0;
             outline: none;
         }
@@ -168,7 +172,7 @@
             padding: 15px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            max-height: 150px;
+            max-height: 200px;
             overflow-y: auto;
         }
         
@@ -183,6 +187,159 @@
             justify-content: space-between;
             padding: 5px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .settings {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .settings h3 {
+            margin-bottom: 15px;
+            font-weight: 300;
+            font-size: 1.2rem;
+        }
+        
+        .setting-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .setting-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .mode-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 0;
+            outline: none;
+        }
+        
+        .mode-btn.active {
+            background: white;
+            color: black;
+        }
+        
+        .achievements {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .achievements h3 {
+            margin-bottom: 15px;
+            font-weight: 300;
+            font-size: 1.2rem;
+        }
+        
+        .achievement-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .achievement {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 5px;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+        
+        .achievement.unlocked {
+            opacity: 1;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid gold;
+        }
+        
+        .custom-time {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        .custom-time input {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            width: 80px;
+            text-align: center;
         }
         
         @media (max-width: 500px) {
@@ -213,14 +370,14 @@
             }
             
             .history {
-                max-height: 120px;
+                max-height: 150px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>CLICK SPEED TEST</h1>
+        <h1>ENHANCED CLICK SPEED TEST</h1>
         
         <div class="stats">
             <div>Best: <span id="bestScore">0</span> CPS</div>
@@ -242,11 +399,46 @@
             <button class="time-btn" data-time="60">60 SECONDS</button>
         </div>
         
+        <div class="custom-time">
+            <span>Custom:</span>
+            <input type="number" id="customTime" min="5" max="300" placeholder="Seconds">
+            <button class="control-btn" id="setCustomTime">SET</button>
+        </div>
+        
         <div class="controls">
             <button class="control-btn" id="resetBtn">RESET</button>
+            <button class="control-btn" id="practiceBtn">PRACTICE MODE</button>
+            <button class="control-btn" id="shareBtn">SHARE SCORE</button>
+        </div>
+        
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="left">LEFT CLICK ONLY</button>
+            <button class="mode-btn" data-mode="alternate">ALTERNATE CLICKS</button>
+            <button class="mode-btn" data-mode="multi">MULTI-CLICK</button>
         </div>
         
         <div class="result" id="result"></div>
+        
+        <div class="settings">
+            <h3>SETTINGS</h3>
+            <div class="setting-group">
+                <span class="setting-label">Sound Effects</span>
+                <label class="toggle">
+                    <input type="checkbox" id="soundToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="achievements">
+            <h3>ACHIEVEMENTS</h3>
+            <div class="achievement-list" id="achievementList">
+                <div class="achievement" id="achievement5">5 CPS</div>
+                <div class="achievement" id="achievement10">10 CPS</div>
+                <div class="achievement" id="achievement15">15 CPS</div>
+                <div class="achievement" id="achievement20">20 CPS</div>
+            </div>
+        </div>
         
         <div class="history">
             <h3>RECENT SCORES</h3>
@@ -261,11 +453,18 @@
             const clickArea = document.getElementById('clickArea');
             const resultElement = document.getElementById('result');
             const resetBtn = document.getElementById('resetBtn');
+            const practiceBtn = document.getElementById('practiceBtn');
+            const shareBtn = document.getElementById('shareBtn');
             const timeButtons = document.querySelectorAll('.time-btn');
             const progressRing = document.getElementById('progressRing');
             const bestScoreElement = document.getElementById('bestScore');
             const avgScoreElement = document.getElementById('avgScore');
             const historyList = document.getElementById('historyList');
+            const soundToggle = document.getElementById('soundToggle');
+            const modeButtons = document.querySelectorAll('.mode-btn');
+            const customTimeInput = document.getElementById('customTime');
+            const setCustomTimeBtn = document.getElementById('setCustomTime');
+            const achievementList = document.getElementById('achievementList');
             
             let count = 0;
             let timeLeft = 20; // Default time
@@ -273,9 +472,21 @@
             let timerInterval;
             let isRunning = false;
             let scores = JSON.parse(localStorage.getItem('clickTestScores')) || [];
+            let achievements = JSON.parse(localStorage.getItem('clickTestAchievements')) || {};
+            let clickMode = 'left'; // left, alternate, multi
+            let lastClickButton = 'left'; // For alternate mode
+            let practiceMode = false;
+            let soundEnabled = false;
+            
+            // Initialize achievements
+            if (!achievements.cps5) achievements.cps5 = false;
+            if (!achievements.cps10) achievements.cps10 = false;
+            if (!achievements.cps15) achievements.cps15 = false;
+            if (!achievements.cps20) achievements.cps20 = false;
             
             // Initialize best and average scores
             updateStats();
+            updateAchievements();
             
             // Set active time button
             function setActiveTimeButton(selectedTime) {
@@ -285,6 +496,41 @@
                         btn.classList.add('active');
                     }
                 });
+            }
+            
+            // Set active mode button
+            function setActiveModeButton(selectedMode) {
+                modeButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.mode === selectedMode) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+            
+            // Play click sound if enabled
+            function playClickSound() {
+                if (!soundEnabled) return;
+                
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                } catch (e) {
+                    console.log("Audio not supported");
+                }
             }
             
             // Update timer display
@@ -307,128 +553,63 @@
                     
                     // Update history list
                     historyList.innerHTML = '';
-                    const recentScores = scores.slice(-5).reverse();
+                    const recentScores = scores.slice(-10).reverse();
                     recentScores.forEach(score => {
                         const item = document.createElement('div');
                         item.className = 'history-item';
-                        item.innerHTML = `<span>${score.toFixed(1)} CPS</span><span>${new Date().toLocaleDateString()}</span>`;
+                        const now = new Date();
+                        item.innerHTML = `<span>${score.toFixed(1)} CPS</span><span>${now.toLocaleDateString()}</span>`;
                         historyList.appendChild(item);
                     });
                 }
             }
             
-            // Save score to localStorage
-            function saveScore(cps) {
-                scores.push(cps);
-                // Keep only last 10 scores
-                if (scores.length > 10) {
-                    scores = scores.slice(-10);
-                }
-                localStorage.setItem('clickTestScores', JSON.stringify(scores));
-                updateStats();
+            // Update achievements display
+            function updateAchievements() {
+                document.getElementById('achievement5').classList.toggle('unlocked', achievements.cps5);
+                document.getElementById('achievement10').classList.toggle('unlocked', achievements.cps10);
+                document.getElementById('achievement15').classList.toggle('unlocked', achievements.cps15);
+                document.getElementById('achievement20').classList.toggle('unlocked', achievements.cps20);
             }
             
-            // Start the game
-            function startGame() {
-                if (isRunning) return;
+            // Check for new achievements
+            function checkAchievements(cps) {
+                let earned = false;
                 
-                isRunning = true;
-                count = 0;
-                totalTime = timeLeft;
-                counterElement.textContent = count;
-                resultElement.textContent = '';
-                
-                timerInterval = setInterval(function() {
-                    timeLeft--;
-                    updateTimer();
-                    
-                    if (timeLeft <= 0) {
-                        endGame();
-                    }
-                }, 1000);
-                
-                clickArea.querySelector('.click-text').textContent = 'CLICK!';
-            }
-            
-            // End the game
-            function endGame() {
-                clearInterval(timerInterval);
-                isRunning = false;
-                
-                const selectedTime = parseInt(document.querySelector('.time-btn.active').dataset.time);
-                const cps = (count / selectedTime).toFixed(2);
-                
-                resultElement.innerHTML = `
-                    <div>Total Clicks: ${count}</div>
-                    <div class="cps">${cps} clicks per second</div>
-                `;
-                
-                clickArea.querySelector('.click-text').textContent = 'TIME\'S UP!';
-                clickArea.style.cursor = 'default';
-                
-                // Save the score
-                saveScore(parseFloat(cps));
-            }
-            
-            // Reset the game
-            function resetGame() {
-                clearInterval(timerInterval);
-                isRunning = false;
-                count = 0;
-                timeLeft = parseInt(document.querySelector('.time-btn.active').dataset.time);
-                totalTime = timeLeft;
-                
-                counterElement.textContent = count;
-                updateTimer();
-                resultElement.textContent = '';
-                clickArea.querySelector('.click-text').textContent = 'CLICK TO START';
-                clickArea.style.cursor = 'pointer';
-            }
-            
-            // Click event for the click area
-            clickArea.addEventListener('click', function() {
-                if (!isRunning) {
-                    startGame();
+                if (cps >= 5 && !achievements.cps5) {
+                    achievements.cps5 = true;
+                    earned = true;
+                }
+                if (cps >= 10 && !achievements.cps10) {
+                    achievements.cps10 = true;
+                    earned = true;
+                }
+                if (cps >= 15 && !achievements.cps15) {
+                    achievements.cps15 = true;
+                    earned = true;
+                }
+                if (cps >= 20 && !achievements.cps20) {
+                    achievements.cps20 = true;
+                    earned = true;
                 }
                 
-                if (isRunning) {
-                    count++;
-                    counterElement.textContent = count;
+                if (earned) {
+                    localStorage.setItem('clickTestAchievements', JSON.stringify(achievements));
+                    updateAchievements();
+                    showAchievementMessage(cps);
                 }
-            });
+            }
             
-            // Time selection buttons
-            timeButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    if (isRunning) return;
-                    
-                    timeLeft = parseInt(this.dataset.time);
-                    totalTime = timeLeft;
-                    setActiveTimeButton(timeLeft);
-                    updateTimer();
-                });
-            });
-            
-            // Reset button
-            resetBtn.addEventListener('click', resetGame);
-            
-            // Spacebar support for accessibility
-            document.addEventListener('keydown', function(e) {
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    if (!isRunning) {
-                        startGame();
-                    }
-                    if (isRunning) {
-                        count++;
-                        counterElement.textContent = count;
-                    }
-                }
-            });
-            
-            // Initialize
-            updateTimer();
-        });
-    </script>
-</body>
-</html>
+            // Show achievement message
+            function showAchievementMessage(cps) {
+                const message = document.createElement('div');
+                message.textContent = `Achievement Unlocked: ${cps.toFixed(1)} CPS!`;
+                message.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: gold;
+                    color: black;
+                    padding: 10px 20px;
+        
