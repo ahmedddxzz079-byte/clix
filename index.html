@@ -36,6 +36,14 @@
             letter-spacing: 3px;
         }
         
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+        
         .timer {
             font-size: 5rem;
             margin: 20px 0;
@@ -64,6 +72,8 @@
             transition: all 0.1s;
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
             user-select: none;
+            position: relative;
+            overflow: hidden;
         }
         
         .click-area:active {
@@ -75,6 +85,19 @@
             font-size: 1.2rem;
             color: #333;
             font-weight: 600;
+            z-index: 2;
+        }
+        
+        .progress-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(transparent 0%, rgba(255, 255, 255, 0.3) 0%);
+            transition: background 1s linear;
+            z-index: 1;
         }
         
         .time-options {
@@ -140,6 +163,28 @@
             opacity: 0.8;
         }
         
+        .history {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .history h3 {
+            margin-bottom: 10px;
+            font-weight: 300;
+            font-size: 1.2rem;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
         @media (max-width: 500px) {
             h1 {
                 font-size: 2rem;
@@ -166,6 +211,10 @@
                 padding: 6px 12px;
                 font-size: 0.8rem;
             }
+            
+            .history {
+                max-height: 120px;
+            }
         }
     </style>
 </head>
@@ -173,10 +222,16 @@
     <div class="container">
         <h1>CLICK SPEED TEST</h1>
         
+        <div class="stats">
+            <div>Best: <span id="bestScore">0</span> CPS</div>
+            <div>Avg: <span id="avgScore">0</span> CPS</div>
+        </div>
+        
         <div class="timer" id="timer">00</div>
         <div class="counter" id="counter">0</div>
         
         <div class="click-area" id="clickArea">
+            <div class="progress-ring" id="progressRing"></div>
             <div class="click-text">CLICK TO START</div>
         </div>
         
@@ -192,6 +247,11 @@
         </div>
         
         <div class="result" id="result"></div>
+        
+        <div class="history">
+            <h3>RECENT SCORES</h3>
+            <div id="historyList"></div>
+        </div>
     </div>
 
     <script>
@@ -202,11 +262,20 @@
             const resultElement = document.getElementById('result');
             const resetBtn = document.getElementById('resetBtn');
             const timeButtons = document.querySelectorAll('.time-btn');
+            const progressRing = document.getElementById('progressRing');
+            const bestScoreElement = document.getElementById('bestScore');
+            const avgScoreElement = document.getElementById('avgScore');
+            const historyList = document.getElementById('historyList');
             
             let count = 0;
             let timeLeft = 20; // Default time
+            let totalTime = 20;
             let timerInterval;
             let isRunning = false;
+            let scores = JSON.parse(localStorage.getItem('clickTestScores')) || [];
+            
+            // Initialize best and average scores
+            updateStats();
             
             // Set active time button
             function setActiveTimeButton(selectedTime) {
@@ -221,6 +290,42 @@
             // Update timer display
             function updateTimer() {
                 timerElement.textContent = timeLeft.toString().padStart(2, '0');
+                
+                // Update progress ring
+                const progress = 100 - (timeLeft / totalTime * 100);
+                progressRing.style.background = `conic-gradient(transparent 0%, rgba(255, 255, 255, 0.3) ${progress}%)`;
+            }
+            
+            // Update statistics
+            function updateStats() {
+                if (scores.length > 0) {
+                    const best = Math.max(...scores);
+                    bestScoreElement.textContent = best.toFixed(1);
+                    
+                    const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+                    avgScoreElement.textContent = avg.toFixed(1);
+                    
+                    // Update history list
+                    historyList.innerHTML = '';
+                    const recentScores = scores.slice(-5).reverse();
+                    recentScores.forEach(score => {
+                        const item = document.createElement('div');
+                        item.className = 'history-item';
+                        item.innerHTML = `<span>${score.toFixed(1)} CPS</span><span>${new Date().toLocaleDateString()}</span>`;
+                        historyList.appendChild(item);
+                    });
+                }
+            }
+            
+            // Save score to localStorage
+            function saveScore(cps) {
+                scores.push(cps);
+                // Keep only last 10 scores
+                if (scores.length > 10) {
+                    scores = scores.slice(-10);
+                }
+                localStorage.setItem('clickTestScores', JSON.stringify(scores));
+                updateStats();
             }
             
             // Start the game
@@ -229,6 +334,7 @@
                 
                 isRunning = true;
                 count = 0;
+                totalTime = timeLeft;
                 counterElement.textContent = count;
                 resultElement.textContent = '';
                 
@@ -259,6 +365,9 @@
                 
                 clickArea.querySelector('.click-text').textContent = 'TIME\'S UP!';
                 clickArea.style.cursor = 'default';
+                
+                // Save the score
+                saveScore(parseFloat(cps));
             }
             
             // Reset the game
@@ -267,6 +376,7 @@
                 isRunning = false;
                 count = 0;
                 timeLeft = parseInt(document.querySelector('.time-btn.active').dataset.time);
+                totalTime = timeLeft;
                 
                 counterElement.textContent = count;
                 updateTimer();
@@ -293,6 +403,7 @@
                     if (isRunning) return;
                     
                     timeLeft = parseInt(this.dataset.time);
+                    totalTime = timeLeft;
                     setActiveTimeButton(timeLeft);
                     updateTimer();
                 });
@@ -300,6 +411,20 @@
             
             // Reset button
             resetBtn.addEventListener('click', resetGame);
+            
+            // Spacebar support for accessibility
+            document.addEventListener('keydown', function(e) {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    if (!isRunning) {
+                        startGame();
+                    }
+                    if (isRunning) {
+                        count++;
+                        counterElement.textContent = count;
+                    }
+                }
+            });
             
             // Initialize
             updateTimer();
