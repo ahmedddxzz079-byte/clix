@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Speed Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #000000 0%, #434343 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 3px;
+        }
+        
+        .timer {
+            font-size: 5rem;
+            margin: 30px 0;
+            font-weight: 100;
+            letter-spacing: 2px;
+        }
+        
+        .counter {
+            font-size: 4rem;
+            margin: 20px 0;
+            font-weight: 100;
+        }
+        
+        .click-area {
+            width: 300px;
+            height: 300px;
+            margin: 30px auto;
+            background: radial-gradient(circle, #ffffff 0%, #aaaaaa 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+            user-select: none;
+        }
+        
+        .click-area:active {
+            transform: scale(0.95);
+            background: radial-gradient(circle, #eeeeee 0%, #888888 100%);
+        }
+        
+        .click-text {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .time-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .time-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 0;
+            outline: none;
+        }
+        
+        .time-btn:hover, .time-btn.active {
+            background: white;
+            color: black;
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0 10px;
+            border-radius: 0;
+            outline: none;
+        }
+        
+        .control-btn:hover {
+            background: white;
+            color: black;
+        }
+        
+        .result {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            min-height: 50px;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .timer {
+                font-size: 4rem;
+            }
+            
+            .counter {
+                font-size: 3rem;
+            }
+            
+            .click-area {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .time-options {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CLICK SPEED TEST</h1>
+        
+        <div class="timer" id="timer">00</div>
+        <div class="counter" id="counter">0</div>
+        
+        <div class="click-area" id="clickArea">
+            <div class="click-text">CLICK TO START</div>
+        </div>
+        
+        <div class="time-options">
+            <button class="time-btn" data-time="10">10 SECONDS</button>
+            <button class="time-btn active" data-time="20">20 SECONDS</button>
+            <button class="time-btn" data-time="30">30 SECONDS</button>
+            <button class="time-btn" data-time="60">60 SECONDS</button>
+        </div>
+        
+        <div class="result" id="result"></div>
+        
+        <div class="controls">
+            <button class="control-btn" id="resetBtn">RESET</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const timerElement = document.getElementById('timer');
+            const counterElement = document.getElementById('counter');
+            const clickArea = document.getElementById('clickArea');
+            const resultElement = document.getElementById('result');
+            const resetBtn = document.getElementById('resetBtn');
+            const timeButtons = document.querySelectorAll('.time-btn');
+            
+            let count = 0;
+            let timeLeft = 20; // Default time
+            let timerInterval;
+            let isRunning = false;
+            
+            // Set active time button
+            function setActiveTimeButton(selectedTime) {
+                timeButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (parseInt(btn.dataset.time) === selectedTime) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+            
+            // Update timer display
+            function updateTimer() {
+                timerElement.textContent = timeLeft.toString().padStart(2, '0');
+            }
+            
+            // Start the game
+            function startGame() {
+                if (isRunning) return;
+                
+                isRunning = true;
+                count = 0;
+                counterElement.textContent = count;
+                resultElement.textContent = '';
+                
+                timerInterval = setInterval(function() {
+                    timeLeft--;
+                    updateTimer();
+                    
+                    if (timeLeft <= 0) {
+                        endGame();
+                    }
+                }, 1000);
+                
+                clickArea.querySelector('.click-text').textContent = 'CLICK!';
+            }
+            
+            // End the game
+            function endGame() {
+                clearInterval(timerInterval);
+                isRunning = false;
+                
+                const cps = (count / timeLeft).toFixed(2);
+                resultElement.textContent = `Result: ${count} clicks (${cps} CPS)`;
+                clickArea.querySelector('.click-text').textContent = 'TIME\'S UP!';
+            }
+            
+            // Reset the game
+            function resetGame() {
+                clearInterval(timerInterval);
+                isRunning = false;
+                count = 0;
+                timeLeft = parseInt(document.querySelector('.time-btn.active').dataset.time);
+                
+                counterElement.textContent = count;
+                updateTimer();
+                resultElement.textContent = '';
+                clickArea.querySelector('.click-text').textContent = 'CLICK TO START';
+            }
+            
+            // Click event for the click area
+            clickArea.addEventListener('click', function() {
+                if (!isRunning) {
+                    startGame();
+                }
+                
+                if (isRunning) {
+                    count++;
+                    counterElement.textContent = count;
+                }
+            });
+            
+            // Time selection buttons
+            timeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (isRunning) return;
+                    
+                    timeLeft = parseInt(this.dataset.time);
+                    setActiveTimeButton(timeLeft);
+                    updateTimer();
+                });
+            });
+            
+            // Reset button
+            resetBtn.addEventListener('click', resetGame);
+            
+            // Initialize
+            updateTimer();
+        });
+    </script>
+</body>
+</html>
